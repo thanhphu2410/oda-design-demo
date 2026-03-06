@@ -9,6 +9,8 @@ import { CompanyPerformanceTable } from "@/components/dashboard/CompanyPerforman
 import { FilterBar } from "@/components/dashboard/FilterBar";
 import {
   mockSummaryData,
+  mockSellSummaryData,
+  mockSellStatusOverview,
   mockStatusOverview,
   mockTrendData,
   mockProductRanking,
@@ -17,138 +19,259 @@ import {
 } from "@/lib/mockData";
 
 const TAB_ITEMS = [
-  { key: "buy", label: "Mua hàng" },
-  { key: "sell", label: "Bán hàng" },
+  { key: "sell", label: "Sell" },
+  { key: "buy", label: "Buy" },
 ];
 
+const GREEN = "#5cb85c";
+const GREY_TEXT = "#6E6B7B";
+const GREY_LIGHT = "#EBE9F1";
+
 export default function DashboardPage() {
-  const [tab, setTab] = useState("buy");
-  const [showComparison, setShowComparison] = useState(true);
+  const [tab, setTab] = useState("sell");
+  const [showComparison, setShowComparison] = useState(false);
+
+  const isSell = tab === "sell";
+  const summaryData = isSell ? mockSellSummaryData : mockSummaryData;
+  const statusData = isSell ? mockSellStatusOverview : mockStatusOverview;
+  const totalOrderKey = isSell ? "totalSellOrder" : "totalBuyOrder";
 
   return (
-    <div style={{
-      flex: 1,
-      minHeight: "100vh",
-      background: "#F0F4F8",
-      display: "flex",
-      flexDirection: "column",
-    }}>
-      {/* Top Header */}
-      <div style={{
-        background: "#fff",
-        borderBottom: "1px solid #ECEFF1",
-        padding: "0 28px",
+    <div
+      style={{
+        flex: 1,
+        minHeight: "100vh",
+        background: "#FFFFFF",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 56,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {TAB_ITEMS.map((t) => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{
-              padding: "0 18px",
-              height: 56,
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-              fontSize: 13,
-              fontWeight: tab === t.key ? 700 : 500,
-              color: tab === t.key ? "#1565C0" : "#78909C",
-              borderBottom: tab === t.key ? "3px solid #1565C0" : "3px solid transparent",
-              transition: "all 0.2s",
-            }}>
-              {t.label}
-            </button>
-          ))}
+        flexDirection: "column",
+      }}
+    >
+      {/* Top Header Bar */}
+      <div
+        style={{
+          background: "#fff",
+          borderBottom: "1px solid #EBE9F1",
+          padding: "0 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: 56,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 18 }}>🍎</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#263238" }}>
+            Happy Oda
+          </span>
+          <span style={{ fontSize: 12, color: GREY_TEXT, marginLeft: 4 }}>▼</span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ fontSize: 11, color: "#90A4AE" }}>
-            Cập nhật lần cuối: 06/03/2026 08:00
-          </div>
-          <button style={{
-            padding: "6px 14px",
-            borderRadius: 8,
-            border: "1.5px solid #ECEFF1",
-            background: "#fff",
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#546E7A",
-            cursor: "pointer",
-          }}>
-            🔄 Làm mới
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <button
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 8,
+              color: GREY_TEXT,
+              fontSize: 18,
+            }}
+          >
+            🔔
           </button>
-          <button style={{
-            padding: "6px 14px",
-            borderRadius: 8,
-            border: "1.5px solid #ECEFF1",
-            background: "#fff",
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#546E7A",
-            cursor: "pointer",
-          }}>
-            📥 Xuất Excel
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                background: GREY_LIGHT,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 11,
+                fontWeight: 600,
+                color: GREY_TEXT,
+              }}
+            >
+              U
+            </div>
+            <span style={{ fontSize: 14, fontWeight: 500, color: "#263238" }}>
+              Happy Oda Owner
+            </span>
+            <span style={{ fontSize: 12, color: GREY_TEXT }}>▼</span>
+          </div>
+          <button
+            style={{
+              padding: "8px 16px",
+              borderRadius: 8,
+              border: `2px solid ${GREEN}`,
+              background: "#fff",
+              fontSize: 13,
+              fontWeight: 600,
+              color: GREEN,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span>↻</span> Refresh
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, padding: "20px 28px", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
-        {/* Title */}
-        <div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#1A2F4E", letterSpacing: -0.5 }}>
-            Dashboard {tab === "buy" ? "Mua hàng" : "Bán hàng"}
-          </div>
-          <div style={{ fontSize: 13, color: "#78909C", marginTop: 2 }}>
-            Tháng 10/2025 · Tổng công ty · So sánh kỳ trước
-          </div>
+      <div
+        style={{
+          flex: 1,
+          padding: "24px 28px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+          overflowY: "auto",
+        }}
+      >
+        {/* Page Title */}
+        <div style={{ fontSize: 24, fontWeight: 700, color: "#263238" }}>
+          Dashboard
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #EBE9F1" }}>
+          {TAB_ITEMS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              style={{
+                padding: "12px 20px",
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                fontSize: 14,
+                fontWeight: tab === t.key ? 700 : 400,
+                color: tab === t.key ? "#263238" : GREY_TEXT,
+                borderBottom:
+                  tab === t.key ? `3px solid ${GREEN}` : "3px solid transparent",
+                marginBottom: -1,
+                transition: "all 0.2s",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
 
         {/* Filter */}
-        <FilterBar onApply={(f) => setShowComparison(f.compare === "last_period")} />
+        <FilterBar
+          variant={isSell ? "sell" : "buy"}
+          onApply={(f) => setShowComparison(f.compare === "last_period")}
+        />
 
-        {/* Summary Row */}
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-          <SummaryCard
-            title={`Tổng đơn ${tab === "buy" ? "mua" : "bán"}`}
-            count={mockSummaryData.totalBuyOrder.count}
-            value={mockSummaryData.totalBuyOrder.value}
-            aov={mockSummaryData.totalBuyOrder.aov}
-            comparison={showComparison ? mockSummaryData.totalBuyOrder.comparisonRatio : undefined}
-            accentColor="#1565C0"
-          />
-          <SummaryCard
-            title="Đơn hoàn thành"
-            count={mockSummaryData.completedOrder.count}
-            value={mockSummaryData.completedOrder.value}
-            aov={mockSummaryData.completedOrder.aov}
-            comparison={showComparison ? mockSummaryData.completedOrder.comparisonRatio : undefined}
-            accentColor="#4CAF50"
-          />
-          <div style={{ flex: "1 1 260px", minWidth: 260 }}>
-            <StatusOverview data={mockStatusOverview} />
+        {/* Summary Section */}
+        <div>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#263238",
+              marginBottom: 16,
+            }}
+          >
+            Summary
+          </div>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            <SummaryCard
+              title={isSell ? "Total sell order" : "Tổng đơn mua"}
+              count={(summaryData as any)[totalOrderKey].count}
+              value={(summaryData as any)[totalOrderKey].value}
+              aov={(summaryData as any)[totalOrderKey].aov}
+              comparison={
+                showComparison && !isSell
+                  ? (mockSummaryData as any).totalBuyOrder?.comparisonRatio
+                  : undefined
+              }
+              variant="green"
+            />
+            <SummaryCard
+              title={isSell ? "Completed order" : "Đơn hoàn thành"}
+              count={summaryData.completedOrder.count}
+              value={summaryData.completedOrder.value}
+              aov={summaryData.completedOrder.aov}
+              comparison={
+                showComparison
+                  ? mockSummaryData.completedOrder.comparisonRatio
+                  : undefined
+              }
+              variant="green"
+            />
           </div>
         </div>
 
-        {/* Trend Chart */}
-        <TrendChart data={mockTrendData} />
+        {/* Status Overview */}
+        <div>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#263238",
+              marginBottom: 16,
+            }}
+          >
+            Status overview
+          </div>
+          <StatusOverview data={statusData} variant="cards" />
+        </div>
 
-        {/* Rankings Row */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <ProductRankingChart
-            top10={mockProductRanking.top10}
-            bottom10={mockProductRanking.bottom10}
-          />
-          <SupplierRankingChart
-            top10={mockSupplierRanking.top10}
-            bottom10={mockSupplierRanking.bottom10}
+        {/* Trends and metrics */}
+        <div>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#263238",
+              marginBottom: 4,
+            }}
+          >
+            Trends and metrics
+          </div>
+          <div
+            style={{
+              fontSize: 14,
+              color: GREY_TEXT,
+              marginBottom: 16,
+            }}
+          >
+            {isSell ? "Sell orders" : "Buy orders"}
+          </div>
+          <TrendChart
+            data={mockTrendData}
+            variant={isSell ? "sell" : "buy"}
           />
         </div>
 
-        {/* Company Performance */}
-        <CompanyPerformanceTable data={mockCompanyPerformance} showComparison={showComparison} />
+        {/* Rankings Row - only for buy */}
+        {!isSell && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <ProductRankingChart
+              top10={mockProductRanking.top10}
+              bottom10={mockProductRanking.bottom10}
+            />
+            <SupplierRankingChart
+              top10={mockSupplierRanking.top10}
+              bottom10={mockSupplierRanking.bottom10}
+            />
+          </div>
+        )}
+
+        {/* Company Performance - only for buy */}
+        {!isSell && (
+          <CompanyPerformanceTable
+            data={mockCompanyPerformance}
+            showComparison={showComparison}
+          />
+        )}
       </div>
     </div>
   );

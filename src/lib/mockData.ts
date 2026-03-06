@@ -1,5 +1,26 @@
 // Mock data for HQ Dashboard
 
+// Sell dashboard data (matches design image)
+export const mockSellSummaryData = {
+  totalSellOrder: {
+    count: 3,
+    value: 441808,
+    aov: 147269,
+  },
+  completedOrder: {
+    count: 0,
+    value: 0,
+    aov: 0,
+  },
+};
+
+export const mockSellStatusOverview = [
+  { status: "Unconfirmed", count: 0, value: 0, color: "#6E6B7B", bgColor: "rgba(144, 139, 165, 0.12)" },
+  { status: "Confirmed", count: 3, value: 441808, color: "#6E6B7B", bgColor: "rgba(110, 107, 123, 0.12)" },
+  { status: "Delivered", count: 0, value: 0, color: "#5cb85c", bgColor: "rgba(92, 184, 92, 0.15)" },
+  { status: "Cancelled order", count: 0, value: 0, color: "#F46A6A", bgColor: "rgba(244, 106, 106, 0.12)" },
+];
+
 export const mockSummaryData = {
   totalBuyOrder: {
     count: 4832,
@@ -24,11 +45,10 @@ export const mockSummaryData = {
 };
 
 export const mockStatusOverview = [
-  { status: "Completed", count: 3621, value: 9340000000, color: "#4CAF50" },
-  { status: "Confirmed", count: 612, value: 1820000000, color: "#2196F3" },
-  { status: "Delivered", count: 287, value: 820000000, color: "#03A9F4" },
-  { status: "Unconfirmed", count: 198, value: 340000000, color: "#FF9800" },
-  { status: "Cancelled", count: 114, value: 160000000, color: "#F44336" },
+  { status: "Unconfirmed", count: 198, value: 340000000, color: "#6E6B7B", bgColor: "rgba(144, 139, 165, 0.12)" },
+  { status: "Confirmed", count: 612, value: 1820000000, color: "#6E6B7B", bgColor: "rgba(110, 107, 123, 0.12)" },
+  { status: "Delivered", count: 287, value: 820000000, color: "#5cb85c", bgColor: "rgba(92, 184, 92, 0.15)" },
+  { status: "Cancelled order", count: 114, value: 160000000, color: "#F46A6A", bgColor: "rgba(244, 106, 106, 0.12)" },
 ];
 
 export const mockTrendData = [
