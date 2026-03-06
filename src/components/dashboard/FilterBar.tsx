@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 interface FilterBarProps {
   onApply?: (filters: FilterState) => void;
+  variant?: "sell" | "buy";
 }
 
 interface FilterState {
@@ -12,89 +13,202 @@ interface FilterState {
   status: string[];
 }
 
-const STATUS_OPTIONS = ["Completed", "Confirmed", "Delivered", "Unconfirmed", "Cancelled"];
+const GREEN = "#5cb85c";
+const GREY = "#6E6B7B";
+const GREY_LIGHT = "#EBE9F1";
 
-export const FilterBar = ({ onApply }: FilterBarProps) => {
+const STATUS_OPTIONS_SELL = [
+  "Unconfirmed",
+  "Confirmed",
+  "Delivered",
+  "Completed",
+];
+
+export const FilterBar = ({ onApply, variant = "buy" }: FilterBarProps) => {
   const [filters, setFilters] = useState<FilterState>({
     scope: "headquarters",
     period: "this_month",
     compare: "none",
-    status: ["Completed", "Confirmed", "Delivered", "Unconfirmed"],
+    status: ["Unconfirmed", "Confirmed", "Delivered", "Completed"],
   });
 
   const btnBase: React.CSSProperties = {
-    padding: "7px 14px",
+    padding: "8px 14px",
     borderRadius: 8,
-    border: "1.5px solid #ECEFF1",
-    fontSize: 12,
-    fontWeight: 600,
+    border: `1px solid ${GREY_LIGHT}`,
+    fontSize: 13,
+    fontWeight: 500,
     cursor: "pointer",
     transition: "all 0.2s",
     whiteSpace: "nowrap",
+    background: "#fff",
+    color: GREY,
   };
 
+  const filterBtnStyle: React.CSSProperties = {
+    ...btnBase,
+    background: "#F5F5F5",
+    borderColor: GREY_LIGHT,
+  };
+
+  const downloadBtnStyle: React.CSSProperties = {
+    padding: "8px 18px",
+    borderRadius: 8,
+    border: "none",
+    background: GREEN,
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  };
+
+  if (variant === "sell") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <span style={{ fontSize: 14, fontWeight: 500, color: GREY }}>
+          Filter:
+        </span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button
+            onClick={() => setFilters({ ...filters, scope: "headquarters" })}
+            style={filterBtnStyle}
+          >
+            Happy Oda
+          </button>
+          <button style={filterBtnStyle}>By order date</button>
+          <button
+            onClick={() => setFilters({ ...filters, period: "this_month" })}
+            style={filterBtnStyle}
+          >
+            This month
+          </button>
+          <button
+            onClick={() => setFilters({ ...filters, compare: "none" })}
+            style={filterBtnStyle}
+          >
+            No comparison
+          </button>
+          {STATUS_OPTIONS_SELL.map((s) => (
+            <button key={s} style={filterBtnStyle}>
+              {s}
+            </button>
+          ))}
+        </div>
+        <button style={filterBtnStyle}>
+          <span style={{ marginRight: 6 }}>☰</span> Filter
+        </button>
+        <button style={downloadBtnStyle}>
+          <span>☁↓</span> Download
+        </button>
+      </div>
+    );
+  }
+
+  // Buy variant - original
   const activeBtn: React.CSSProperties = {
     ...btnBase,
-    background: "#E3F2FD",
-    borderColor: "#1565C0",
-    color: "#1565C0",
+    background: "rgba(92, 184, 92, 0.12)",
+    borderColor: GREEN,
+    color: GREEN,
   };
 
   const inactiveBtn: React.CSSProperties = {
     ...btnBase,
-    background: "#fff",
-    color: "#546E7A",
   };
 
   return (
-    <div style={{
-      background: "#fff",
-      borderRadius: 12,
-      padding: "14px 20px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-      border: "1px solid #ECEFF1",
-      display: "flex",
-      gap: 16,
-      alignItems: "center",
-      flexWrap: "wrap",
-    }}>
-      {/* Scope */}
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: 12,
+        padding: "14px 20px",
+        border: `1px solid ${GREY_LIGHT}`,
+        display: "flex",
+        gap: 16,
+        alignItems: "center",
+        flexWrap: "wrap",
+      }}
+    >
       <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: "#78909C", fontWeight: 600, marginRight: 4 }}>PHẠM VI</span>
+        <span
+          style={{
+            fontSize: 11,
+            color: GREY,
+            fontWeight: 600,
+            marginRight: 4,
+          }}
+        >
+          PHẠM VI
+        </span>
         {(["headquarters", "company"] as const).map((s) => (
-          <button key={s} onClick={() => setFilters({ ...filters, scope: s })}
-            style={filters.scope === s ? activeBtn : inactiveBtn}>
+          <button
+            key={s}
+            onClick={() => setFilters({ ...filters, scope: s })}
+            style={filters.scope === s ? activeBtn : inactiveBtn}
+          >
             {s === "headquarters" ? "Tổng công ty" : "Chi nhánh"}
           </button>
         ))}
       </div>
 
-      <div style={{ width: 1, height: 28, background: "#ECEFF1" }} />
+      <div style={{ width: 1, height: 28, background: GREY_LIGHT }} />
 
-      {/* Period */}
       <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: "#78909C", fontWeight: 600, marginRight: 4 }}>KỲ</span>
+        <span
+          style={{
+            fontSize: 11,
+            color: GREY,
+            fontWeight: 600,
+            marginRight: 4,
+          }}
+        >
+          KỲ
+        </span>
         {[
           { key: "this_week", label: "Tuần này" },
           { key: "this_month", label: "Tháng này" },
           { key: "this_quarter", label: "Quý này" },
           { key: "this_year", label: "Năm nay" },
         ].map(({ key, label }) => (
-          <button key={key} onClick={() => setFilters({ ...filters, period: key })}
-            style={filters.period === key ? activeBtn : inactiveBtn}>
+          <button
+            key={key}
+            onClick={() => setFilters({ ...filters, period: key })}
+            style={filters.period === key ? activeBtn : inactiveBtn}
+          >
             {label}
           </button>
         ))}
       </div>
 
-      <div style={{ width: 1, height: 28, background: "#ECEFF1" }} />
+      <div style={{ width: 1, height: 28, background: GREY_LIGHT }} />
 
-      {/* Compare */}
       <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: "#78909C", fontWeight: 600, marginRight: 4 }}>SO SÁNH</span>
+        <span
+          style={{
+            fontSize: 11,
+            color: GREY,
+            fontWeight: 600,
+            marginRight: 4,
+          }}
+        >
+          SO SÁNH
+        </span>
         {(["none", "last_period"] as const).map((c) => (
-          <button key={c} onClick={() => setFilters({ ...filters, compare: c })}
-            style={filters.compare === c ? activeBtn : inactiveBtn}>
+          <button
+            key={c}
+            onClick={() => setFilters({ ...filters, compare: c })}
+            style={filters.compare === c ? activeBtn : inactiveBtn}
+          >
             {c === "none" ? "Không" : "Kỳ trước"}
           </button>
         ))}
@@ -102,19 +216,17 @@ export const FilterBar = ({ onApply }: FilterBarProps) => {
 
       <div style={{ flex: 1 }} />
 
-      {/* Apply */}
       <button
         onClick={() => onApply?.(filters)}
         style={{
           padding: "8px 20px",
           borderRadius: 8,
           border: "none",
-          background: "#1565C0",
+          background: GREEN,
           color: "#fff",
           fontSize: 13,
           fontWeight: 700,
           cursor: "pointer",
-          boxShadow: "0 2px 6px rgba(21,101,192,0.3)",
         }}
       >
         Áp dụng

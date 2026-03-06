@@ -1,6 +1,12 @@
 "use client";
 import React from "react";
-import { formatCurrency, formatNumber, formatPercent, getTrendColor, getTrendIcon } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatNumber,
+  formatPercent,
+  getTrendColor,
+  getTrendIcon,
+} from "@/lib/utils";
 
 interface MetricRowProps {
   label: string;
@@ -9,12 +15,27 @@ interface MetricRowProps {
 }
 
 const MetricRow = ({ label, value, ratio }: MetricRowProps) => (
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #F5F5F5" }}>
-    <span style={{ fontSize: 12, color: "#78909C" }}>{label}</span>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "6px 0",
+    }}
+  >
+    <span style={{ fontSize: 13, color: "inherit", opacity: 0.9 }}>
+      {label}
+    </span>
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span style={{ fontSize: 13, fontWeight: 600, color: "#263238" }}>{value}</span>
+      <span style={{ fontSize: 13, fontWeight: 600 }}>{value}</span>
       {ratio !== undefined && (
-        <span style={{ fontSize: 11, fontWeight: 600, color: getTrendColor(ratio) }}>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: getTrendColor(ratio),
+          }}
+        >
           {getTrendIcon(ratio)} {formatPercent(Math.abs(ratio))}
         </span>
       )}
@@ -29,35 +50,93 @@ interface SummaryCardProps {
   aov: number;
   comparison?: { count: number; value: number; aov: number };
   accentColor?: string;
+  variant?: "default" | "green";
 }
 
-export const SummaryCard = ({ title, count, value, aov, comparison, accentColor = "#1565C0" }: SummaryCardProps) => {
+const GREEN = "#5cb85c";
+const LIGHT_GREEN_BG = "rgba(92, 184, 92, 0.12)";
+
+export const SummaryCard = ({
+  title,
+  count,
+  value,
+  aov,
+  comparison,
+  accentColor = "#1565C0",
+  variant = "default",
+}: SummaryCardProps) => {
+  const isGreen = variant === "green";
+  const color = isGreen ? GREEN : accentColor;
+  const bgColor = isGreen ? LIGHT_GREEN_BG : "#fff";
+  const borderColor = isGreen ? "transparent" : accentColor;
+
   return (
-    <div style={{
-      background: "#fff",
-      borderRadius: 12,
-      padding: "20px 24px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-      border: "1px solid #ECEFF1",
-      borderTop: `4px solid ${accentColor}`,
-      flex: 1,
-      minWidth: 260,
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-        <div style={{
-          width: 8, height: 8, borderRadius: "50%", background: accentColor
-        }} />
-        <span style={{ fontSize: 14, fontWeight: 700, color: "#37474F", textTransform: "uppercase", letterSpacing: 0.5 }}>
+    <div
+      style={{
+        background: bgColor,
+        borderRadius: 12,
+        padding: "20px 24px",
+        border: `1px solid ${isGreen ? "rgba(92, 184, 92, 0.2)" : "#ECEFF1"}`,
+        flex: 1,
+        minWidth: 260,
+        color: color,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          marginBottom: 12,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            textTransform: "capitalize",
+          }}
+        >
           {title}
         </span>
+        {isGreen && (
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              border: `2px solid ${color}`,
+              fontSize: 10,
+              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            i
+          </span>
+        )}
       </div>
-      <div style={{ fontSize: 28, fontWeight: 800, color: accentColor, marginBottom: 4 }}>
+      <div
+        style={{
+          fontSize: 32,
+          fontWeight: 700,
+          marginBottom: 12,
+        }}
+      >
         {formatNumber(count)}
-        <span style={{ fontSize: 12, color: "#90A4AE", fontWeight: 400, marginLeft: 4 }}>đơn hàng</span>
       </div>
-      <MetricRow label="Tổng số đơn" value={formatNumber(count)} ratio={comparison?.count} />
-      <MetricRow label="Tổng giá trị" value={formatCurrency(value, true)} ratio={comparison?.value} />
-      <MetricRow label="AOV" value={formatCurrency(aov, true)} ratio={comparison?.aov} />
+      <MetricRow
+        label="Total value"
+        value={formatCurrency(value, true)}
+        ratio={comparison?.value}
+      />
+      <MetricRow
+        label="Average order value"
+        value={formatCurrency(aov, true)}
+        ratio={comparison?.aov}
+      />
     </div>
   );
 };

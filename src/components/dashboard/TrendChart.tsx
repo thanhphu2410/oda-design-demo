@@ -11,9 +11,11 @@ interface TrendPoint {
 
 interface TrendChartProps {
   data: TrendPoint[];
+  variant?: "sell" | "buy";
 }
 
-export const TrendChart = ({ data }: TrendChartProps) => {
+export const TrendChart = ({ data, variant = "buy" }: TrendChartProps) => {
+  const primaryColor = variant === "sell" ? "#5cb85c" : "#1565C0";
   const option = {
     grid: { top: 20, right: 60, bottom: 30, left: 70, containLabel: false },
     tooltip: {
@@ -74,7 +76,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
         type: "bar",
         data: data.map((d) => d.amount),
         yAxisIndex: 0,
-        itemStyle: { color: "#1565C0", borderRadius: [3, 3, 0, 0] },
+        itemStyle: { color: primaryColor, borderRadius: [3, 3, 0, 0] },
         barMaxWidth: 24,
         label: {
           show: false,
@@ -104,7 +106,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
       border: "1px solid #ECEFF1",
     }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: "#37474F", marginBottom: 16, textTransform: "uppercase", letterSpacing: 0.5 }}>
-        Xu hướng đơn mua
+        {variant === "sell" ? "Xu hướng đơn bán" : "Xu hướng đơn mua"}
       </div>
       <ReactECharts option={option} style={{ height: 280 }} />
     </div>
